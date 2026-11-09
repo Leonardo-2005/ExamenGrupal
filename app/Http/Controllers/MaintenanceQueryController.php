@@ -42,36 +42,4 @@ class MaintenanceQueryController extends Controller
 
         return response()->json($results);
     }
-
-    public function operationalCriticalMachines()
-    {
-    $results = Machine::query()
-        ->where(function ($query) {
-            $query->where('status', 'operativa')
-        ->orWhere('status', 'mantenimiento');
-    })
-        ->where('criticality', 'alta')
-        ->select('code', 'name', 'type', 'status', 'criticality')
-        ->get();
-
-return response()->json($results);
-}
-
-public function machinesWithPendingCorrectiveMaintenance()
-    {
-        $results = Machine::query()
-        ->whereHas('maintenanceOrders', function ($query) {
-        $query->where('maintenance_type', 'correctivo')
-        ->where('status', 'pendiente')
-        ->whereNull('completed_at');
-        })
-        ->with('productionLine:id,name')
-        ->select('id', 'production_line_id', 'code', 'name', 'status', 'criticality')
-        ->get();
-
-    return response()->json($results);
-    }
-  
-
-
 }

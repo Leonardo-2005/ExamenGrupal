@@ -43,7 +43,62 @@ class MaintenanceQueryController extends Controller
         return response()->json($results);
     }
 
-  
+    public function machinesWithProductionLine()
+    {
+        $results = Machine::query()
+            ->with('productionLine:id,name,location')
+            ->select(
+                'id',
+                'production_line_id',
+                'code',
+                'name',
+                'type',
+                'status',
+                'criticality'
+            )
+            ->orderBy('name', 'asc')
+            ->get();
 
+        return response()->json($results);
+    }
 
+    public function machinesWithMaintenanceCount()
+    {
+        $results = Machine::query()
+            ->select('id', 'code', 'name', 'status', 'criticality')
+            ->withCount('maintenanceOrders')
+            ->orderByDesc('maintenance_orders_count')
+            ->get();
+
+        return response()->json($results);
+    }
+
+    public function operationalCriticalMachines()
+    {
+        $results = Machine::query()
+            ->where(function ($query) {
+                $query->where('status', 'operativa')
+                    ->orWhere('status', 'mantenimiento');
+            })
+            ->where('criticality', 'alta')
+            ->select('code', 'name', 'type', 'status', 'criticality')
+            ->get();
+
+        return response()->json($results);
+    }
+
+    public function machinesWithPendingCorrectiveMaintenance()
+    {
+        $results = Machine::query()
+            ->whereHas('maintenanceOrders', function ($query) {
+                $query->where('maintenance_type', 'correctivo')
+                    ->where('status', 'pendiente')
+                    ->whereNull('completed_at');
+            })
+            ->with('productionLine:id,name')
+            ->select('id', 'production_line_id', 'code', 'name', 'status', 'criticality')
+            ->get();
+
+        return response()->json($results);
+    }
 }

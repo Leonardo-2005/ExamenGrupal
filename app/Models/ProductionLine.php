@@ -20,3 +20,4 @@ class ProductionLine extends Model
         return $this->hasMany(Machine::class);
     }
 }
+

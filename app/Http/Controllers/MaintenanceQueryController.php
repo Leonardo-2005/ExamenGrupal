@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Machine;
 use App\Models\MaintenanceOrder;
-use Illuminate\Http\Request;
 
 class MaintenanceQueryController extends Controller
 {
@@ -66,8 +65,8 @@ class MaintenanceQueryController extends Controller
     public function machinesWithMaintenanceCount()
     {
         $results = Machine::query()
-            ->withCount('maintenanceOrders')
             ->select('id', 'code', 'name', 'status', 'criticality')
+            ->withCount('maintenanceOrders')
             ->orderByDesc('maintenance_orders_count')
             ->get();
 

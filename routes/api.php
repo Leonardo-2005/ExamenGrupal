@@ -13,4 +13,11 @@ Route::get('/maintenance/completed-date', [
     'maintenanceByCompletedDate',
 ]);
 
-
+Route::get('/machines/operational-critical', [
+    MaintenanceQueryController::class,
+    'operationalCriticalMachines',
+]); 
+Route::get('/machines/pending-corrective', [
+    MaintenanceQueryController::class,
+    'machinesWithPendingCorrectiveMaintenance',
+]);
